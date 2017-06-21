@@ -48,10 +48,10 @@ import (
 
 	"strings"
 
-	"github.com/pressly/chi"
-	"github.com/pressly/chi/docgen"
-	"github.com/pressly/chi/middleware"
-	"github.com/pressly/chi/render"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/docgen"
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/render"
 )
 
 var routes = flag.Bool("routes", false, "Generate router documentation")
@@ -102,7 +102,7 @@ func main() {
 	if *routes {
 		// fmt.Println(docgen.JSONRoutesDoc(r))
 		fmt.Println(docgen.MarkdownRoutesDoc(r, docgen.MarkdownOpts{
-			ProjectPath: "github.com/pressly/chi",
+			ProjectPath: "github.com/go-chi/chi",
 			Intro:       "Welcome to the chi/_examples/rest generated docs.",
 		}))
 		return

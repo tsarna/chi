@@ -39,11 +39,11 @@ stdlib HTTP handlers and middlwares.
 
 ## v1.0.0 (2016-07-01)
 
-- Released chi v1 stable https://github.com/pressly/chi/tree/v1.0.0 for Go 1.6 and older.
+- Released chi v1 stable https://github.com/go-chi/chi/tree/v1.0.0 for Go 1.6 and older.
 
 
 ## v0.9.0 (2016-03-31)
 
-- Reuse context objects via sync.Pool for zero-allocation routing [#33](https://github.com/pressly/chi/pull/33)
+- Reuse context objects via sync.Pool for zero-allocation routing [#33](https://github.com/go-chi/chi/pull/33)
 - BREAKING NOTE: due to subtle API changes, previously `chi.URLParams(ctx)["id"]` used to access url parameters
   has changed to: `chi.URLParam(ctx, "id")`
