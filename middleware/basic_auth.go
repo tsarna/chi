@@ -1,23 +1,26 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
 
-// Checks whether a user and password combination is allowed to authenticate with
-// the BasicAuthWithAuthenticator simple basic http auth middleware.
+// Checks whether a user and password combination is allowed to authenticate
+// with the BasicAuthWithAuthenticator simple basic http auth middleware.
+// If the authenticator returns a non-nil context, it will be used for handlers
+// after this middleware.
 type Authenticator interface {
-	CheckPassword(user string, password string) bool
+	CheckPassword(ctx context.Context, user string, password string) (bool, context.Context)
 }
 
 type MapAuthenticator struct {
 	creds map[string]string
 }
 
-func (authData MapAuthenticator) CheckPassword(user string, password string) bool {
+func (authData MapAuthenticator) CheckPassword(user string, password string) (bool, context.Context) {
 	credPass, credUserOk := authData.creds[user]
-	return credUserOk && password == credPass
+	return credUserOk && password == credPass, nil
 }
 
 // BasicAuth implements a simple middleware handler for adding basic http auth to a route using
@@ -32,9 +35,18 @@ func BasicAuthWithAuthenticator(realm string, auth Authenticator) func(next http
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			user, pass, ok := r.BasicAuth()
-			if !ok || !auth.CheckPassword(user, pass) {
+			var newCtx context.Context
+			if ok {
+				ok, newCtx = auth.CheckPassword(r.Context(), user, pass)
+			}
+
+			if !ok {
 				basicAuthFailed(w, realm)
 				return
+			}
+
+			if newCtx != nil {
+				r = r.WithContext(newCtx)
 			}
 
 			next.ServeHTTP(w, r)
