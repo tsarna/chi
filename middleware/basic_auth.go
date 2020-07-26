@@ -18,7 +18,7 @@ type MapAuthenticator struct {
 	creds map[string]string
 }
 
-func (authData MapAuthenticator) CheckPassword(user string, password string) (bool, context.Context) {
+func (authData MapAuthenticator) CheckPassword(ctx context.Context, user string, password string) (bool, context.Context) {
 	credPass, credUserOk := authData.creds[user]
 	return credUserOk && password == credPass, nil
 }
